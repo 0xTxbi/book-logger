@@ -36,8 +36,60 @@ UI.prototype.addBookToList = function (book) {
 
 }
 
+// Show Error Noitification
+UI.prototype.showErrorNotification = function (message, classValue) {
+
+	// Create a div
+	const div = document.createElement('div');
+
+	// Add classes
+	div.className = `alert ${classValue}`;
+
+	// Add Text
+	div.appendChild(document.createTextNode(message));
+
+	// Insert into the DOM
+	const container = document.querySelector('.container');
+	const firstForm = document.querySelector('#book-form');
+
+	// Insert error alert
+	container.insertBefore(div, firstForm);
+
+	// Clear after 2 seconds
+	setTimeout(function () {
+		document.querySelector('.alert').remove();
+	}, 2000);
+
+}
+
+// Show List Addition notification
+UI.prototype.showSuccessNotification = function (message, classValue) {
+
+	// Create a div
+	const div = document.createElement('div');
+
+	// Add classes
+	div.className = `alert ${classValue}`;
+
+	// Add Text
+	div.appendChild(document.createTextNode(message));
+
+	// Insert into the DOM
+	const container = document.querySelector('.container');
+	const firstForm = document.querySelector('#book-form');
+
+	// Insert error alert
+	container.insertBefore(div, firstForm);
+
+	// Clear after 2 seconds
+	setTimeout(function () {
+		document.querySelector('.alert').remove();
+	}, 2000);
+
+}
+
 // Clear fields
-UI.prototype.clearFields = function() {
+UI.prototype.clearFields = function () {
 
 	document.getElementById('title').value = '';
 	document.getElementById('author').value = '';
@@ -62,13 +114,27 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
 	// Instantiate a UI object
 	const ui = new UI();
 
-	// Add book to list
-	ui.addBookToList(book);
-	
-	// Clear fields
-	ui.clearFields();
+	// Validate form inputs
+	if (author === '' || title === '' || isbn === '') {
+
+		// Error notification
+		ui.showErrorNotification('Please fill in all input fields', 'error');
+
+	} else {
+
+		// Add book to list
+		ui.addBookToList(book);
+
+		// Success notification
+		ui.showSuccessNotification('Book Successfully added', 'success');
 
 
-	
+		// Clear fields
+		ui.clearFields();
+
+	}
+
+
+
 	e.preventDefault();
 });
