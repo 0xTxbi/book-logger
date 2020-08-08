@@ -1,3 +1,4 @@
+// Book Class
 class Book {
 
 	constructor(title, author, isbn) {
@@ -10,6 +11,7 @@ class Book {
 
 }
 
+// UI Class
 class UI {
 
 	addBookToList(book) {
@@ -103,6 +105,81 @@ class UI {
 }
 
 
+// Local Storage Class
+class Store {
+
+	// Obtain books from local storage
+	static getBooks() {
+
+		let books;
+		if (localStorage.getItem('books') === null) {
+
+			books = [];
+
+		} else {
+
+			books = JSON.parse(localStorage.getItem('books'));
+
+		}
+
+		return books;
+
+	}
+
+
+	static displayBooks() {
+
+		const books = Store.getBooks();
+
+		books.forEach(function (book) {
+
+			const ui = new UI;
+
+			// Add book to UI
+			ui.addBookToList(book);
+
+
+		});
+
+	}
+
+	static addBooks(book) {
+
+		const books = Store.getBooks();
+
+		books.push(book);
+
+		localStorage.setItem('books', JSON.stringify(books));
+
+	}
+
+
+	static removeBooks(isbn, index) {
+
+		const books = Store.getBooks();
+
+		books.forEach(function (book) {
+
+			if (book.isbn === isbn) {
+
+				books.splice(index, 1);
+
+			}
+
+
+		});
+
+		localStorage.setItem('books', JSON.stringify(books));
+
+	}
+
+}
+
+
+// DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks);
+
+
 // Event Listener for adding book items
 document.getElementById('book-form').addEventListener('submit', function (e) {
 
@@ -129,6 +206,9 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
 		// Add book to list
 		ui.addBookToList(book);
 
+		// Add to local storage
+		Store.addBooks(book);
+
 		// Success notification
 		ui.showSuccessNotification('Book Successfully added', 'success');
 
@@ -143,12 +223,17 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
 	e.preventDefault();
 });
 
+
+
 // Event Listener for deleting book items
 document.getElementById('book-list').addEventListener('click', function (e) {
 
 	const ui = new UI();
 
 	ui.deleteBook(e.target);
+
+	// Remove from Local storage
+	Store.removeBooks(e.target.parentElement.previousElementSibling.textContent);
 
 	// Show message
 	ui.showSuccessNotification('Book item removed', 'success');
